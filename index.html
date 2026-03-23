@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍳 Web Công Thức Nấu Ăn Pro</title>
+    <style>
+        :root {
+            --primary: #ff7043;
+            --secondary: #ff9800;
+            --light: #fff8f0;
+            --ing-bg: #fff3e0; 
+            --step-bg: #f1f8e9;
+            --tip-bg: #e3f2fd;}
+
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: var(--light); color: #333; }
+
+        /* HEADER & NAV */
+        header {color: white;}
+        
+        nav { background: #333; text-align: center; padding: 12px; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        nav a { color: white; margin: 0 15px; text-decoration: none; font-weight: bold; transition: 0.3s; display: inline-block; }
+        nav a:hover { color: var(--secondary); transform: scale(1.1); }
+
+        /* SLIDER VÒNG LẶP */
+        .slider-container { max-width: 1000px; margin: 25px auto; padding: 0 20px; }
+        .main-slider { width: 100%; height: 400px; border-radius: 25px; overflow: hidden; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+        .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 1s ease-in-out; }
+        .slide.active { opacity: 1; z-index: 10; }
+        .slide img { width: 100%; height: 100%; object-fit: cover; }
+        .slide-title { position: absolute; bottom: 25px; left: 25px; background: rgba(255, 112, 67, 0.85); color: white; padding: 10px 25px; border-radius: 50px; font-size: 22px; font-weight: bold; backdrop-filter: blur(5px); }
+
+        /* SEARCH & FILTER (Phân loại mới) */
+        .controls { text-align: center; margin: 25px; }
+        input, select { padding: 10px 15px; border-radius: 20px; border: 1px solid #ccc; margin: 5px; outline: none; }
+
+        /* RECIPES GRID - CĂN ĐỐI 3 TRÊN 2 DƯỚI */
+        .container { 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 25px; 
+            max-width: 1100px; 
+            margin: 0 auto; 
+            padding: 20px; }
+        .recipe { 
+            background: white; border-radius: 20px; overflow: hidden; transition: 0.4s; 
+            text-align: center; padding-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            width: 320px; }
+        .recipe:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+        .recipe img { width: 100%; height: 200px; object-fit: cover; cursor: pointer; }
+        .recipe h3 { margin: 15px 0 10px; color: #e64a19; font-size: 1.3em; }
+
+        /* MODAL */
+        .modal { display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 35px; border-radius: 25px; width: 90%; max-width: 650px; max-height: 90vh; overflow-y: auto; position: relative; animation: popUp 0.4s ease; text-align: left; }
+        @keyframes popUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-img { width: 100%; height: 300px; object-fit: cover; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        .ing-box { background: var(--ing-bg); padding: 15px; border-radius: 15px; margin-bottom: 15px; }
+        .step-box { background: var(--step-bg); padding: 15px; border-radius: 15px; margin-bottom: 15px; }
+        .tip-box { background: var(--tip-bg); padding: 15px; border-left: 5px solid #2196f3; border-radius: 5px; margin-bottom: 20px; }
+        .modal-content ul, .modal-content ol { padding-left: 20px; }
+
+        .btn-submit { background: var(--primary); color: white; border: none; padding: 12px 40px; border-radius: 30px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+
+        /* TEAM & CONTACT */
+        .team { padding: 60px 20px; text-align: center; }
+        .team-wrapper { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 20px; }
+        .card { background: #eee; padding: 20px; border-radius: 15px; width: 160px; border: 1px solid #ddd; }
+        
+        #contact { padding: 60px 20px; text-align: center; }
+        #contact form { max-width: 450px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+        #contact input, #contact textarea { padding: 12px 20px; border-radius: 30px; border: 1px solid #ddd; width: 100%; box-sizing: border-box; outline: none; }
+
+        footer { background: #222; color: white; text-align: center; padding: 20px; margin-top: 30px; }
+        .reveal { opacity: 0; transform: translateY(30px); transition: 0.8s ease; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        /* HERO VIDEO FULL MÀN HÌNH */
+.hero {position: relative;height: 100vh;overflow: hidden;}
+
+#bgVideo {position: absolute;top: 50%;left: 50%;width: 100%;height: 100%; object-fit: cover;transform: translate(-50%, -50%);z-index: -2}
+
+/* LỚP TỐI GIÚP CHỮ DỄ ĐỌC */
+.overlay {position: absolute;top: 0;left: 0;width: 100%; height: 100%;background: rgba(0,0,0,0.5); z-index: -1;}
+
+/* TEXT TRÊN VIDEO */
+.hero-content {position: relative;color: white;text-align: center;top: 50%;transform: translateY(-50%);}
+
+.hero-content h1 {font-size: 48px;margin-bottom: 10px;}
+
+.hero-content p {font-size: 20px;}
+.hero-content {animation: fadeInUp 1.5s ease;}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);}
+    to {
+        opacity: 1;
+        transform: translateY(-50%);}}
+    </style>
+</head>
+<body>
+
+<header class="hero">
+    <!-- VIDEO NỀN -->
+    <video autoplay muted loop playsinline preload="auto" id="bgVideo">
+    <source src="video.mp4" type="video/mp4">
+</video>
+
+    <!-- LỚP PHỦ -->
+    <div class="overlay"></div>
+
+    <!-- NỘI DUNG -->
+    <div class="hero-content">
+        <h1>🍲 Web Công Thức Nấu Ăn</h1>
+        <p>Thực đơn hoàn hảo cho mọi gian bếp</p>
+    </div>
+</header>
+
+<nav>
+    <a href="#">Trang chủ</a>
+    <a href="#recipes">Món ăn</a>
+    <a href="#team">Đội ngũ</a>
+    <a href="#contact">Liên hệ</a>
+</nav>
+
+<div class="slider-container">
+    <div class="main-slider" id="mainSlider"></div>
+</div>
+
+<div class="controls">
+    <input type="text" id="search" placeholder="🔍 Tìm món ngon...">
+    <!-- BỘ LỌC PHÂN LOẠI MỚI -->
+    <select id="filter">
+        <option value="all">Tất cả món</option>
+        <option value="kv">Món khai vị</option>
+        <option value="mc">Món chính</option>
+        <option value="ak">Món phụ / Ăn kèm</option>
+        <option value="tm">Món tráng miệng</option>
+    </select>
+</div>
+
+<div class="container" id="recipes"></div>
+
+<!-- MODAL CÔNG THỨC -->
+<div id="recipeModal" class="modal" onclick="closeModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h2 id="modalTitle" style="color: #e64a19; border-bottom: 3px solid #ff7043; padding-bottom: 10px;"></h2>
+        <img id="modalImg" class="modal-img" src="" alt="Ảnh món ăn">
+        <strong>🛒 Nguyên liệu:</strong>
+        <div id="modalIngredients" class="ing-box"></div>
+        <strong>👨‍🍳 Cách nấu:</strong>
+        <div id="modalSteps" class="step-box"></div>
+        <div id="modalTip" class="tip-box"></div>
+        <button class="btn-submit" onclick="closeModal()" style="width:100%; margin-top:10px;">Đóng công thức</button>
+    </div>
+</div>
+
+<div class="team reveal" id="team">
+    <h2>👨‍🍳 Đội ngũ bếp</h2>
+    <div class="team-wrapper">
+        <div class="card"><h3>Bếp trưởng</h3><p>Ngọc Hân</p></div>
+        <div class="card"><h3>Phó bếp</h3><p>Lê Như</p></div>
+        <div class="card"><h3>Phụ bếp</h3><p>Đức Tùng</p></div>
+        <div class="card"><h3>Phụ bếp</h3><p>Thành Trung</p></div>
+        <div class="card"><h3>Phụ bếp</h3><p>Hải Trương</p></div>
+    </div>
+</div>
+
+<div id="contact" class="reveal">
+    <h2>📞 Liên hệ</h2>
+    <form onsubmit="event.preventDefault(); alert('🎉 Đã gửi thông tin liên hệ thành công!');">
+        <input type="text" placeholder="Tên của bạn" required>
+        <input type="email" placeholder="Email" required>
+        <textarea placeholder="Bạn muốn nhắn gửi điều gì..." style="height: 100px; border-radius: 15px;"></textarea>
+        <button class="btn-submit">Gửi</button>
+    </form>
+</div>
+
+<footer><p>© 2026 Web Ẩm Thực Pro - Trao gửi hương vị</p></footer>
+
+<script>
+// DỮ LIỆU PHÂN LOẠI MỚI
+const recipes = [
+    {
+        name: "Súp gà", type: "kv", img: "soup ga.jpg",
+        ingredients: ["300g thịt gà", "1 củ cà rốt", "1 bắp ngô", "2 thìa bột năng", "1 quả trứng gà", "Gia vị: muối, tiêu, hạt nêm"],
+        steps: ["Luộc thịt gà chín rồi xé nhỏ.", "Đun nước dùng gà, cho cà rốt và ngô vào nấu mềm.", "Cho thịt gà vào nồi, nêm gia vị vừa ăn.", "Hòa bột năng với nước rồi cho vào nồi để tạo độ sánh.", "Đánh trứng rồi đổ từ từ vào nồi súp.", "Nấu thêm 2 phút rồi tắt bếp."],
+        tip: "Thêm ít tiêu và hành lá khi ăn sẽ giúp súp thơm ngon hơn."
+    },
+    {
+        name: "Sườn xào chua ngọt", type: "mc", img: "suon xao chua ngot.jpg",
+        ingredients: ["500g sườn heo", "2 thìa nước mắm", "2 thìa đường", "1 thìa giấm/chanh", "2 thìa tương cà", "Hành tím, tỏi băm"],
+        steps: ["Rửa sạch sườn, chặt miếng vừa ăn.", "Luộc sơ sườn khoảng 3 phút rồi để ráo.", "Chiên sườn vàng đều các mặt.", "Phi thơm tỏi và hành.", "Cho nước mắm, đường, giấm và tương cà vào làm sốt.", "Cho sườn vào đảo đều để sốt thấm vào sườn.", "Nấu khoảng 5 phút đến khi sệt lại."],
+        tip: "Chiên sườn trước khi xào giúp sườn giòn bên ngoài và thấm sốt hơn."
+    },
+    {
+        name: "Rau bí xào tỏi", type: "ak", img: "rau bi xao toi.jpg",
+        ingredients: ["300g rau bí", "3 tép tỏi", "1 thìa dầu ăn", "1/2 thìa muối", "1/2 thìa hạt nêm"],
+        steps: ["Rửa sạch rau bí, để ráo nước.", "Bóc vỏ tỏi và băm nhỏ.", "Làm nóng chảo với dầu ăn.", "Phi thơm tỏi cho vàng.", "Cho rau bí vào xào nhanh tay.", "Nêm gia vị vừa ăn.", "Xào khoảng 3–4 phút rồi tắt bếp."],
+        tip: "Xào rau với lửa lớn và nhanh tay để rau giữ được màu xanh và độ giòn."
+    },
+    {
+        name: "Thạch nước cốt dừa", type: "tm", img: "ct.jpg",
+        ingredients: ["400ml nước cốt dừa", "200ml nước lọc", "50–70g đường", "1 gói bột rau câu", "Ống vani, nhúm muối"],
+        steps: ["Trộn bột rau câu với đường.", "Cho nước lọc và nước cốt dừa vào nồi khuấy đều.", "Đun hỗn hợp lửa vừa, khuấy tan đến khi sôi nhẹ.", "Thêm muối và vani cho thơm béo.", "Đổ ra khuôn, để nguội rồi cho vào tủ lạnh 1-2h."],
+        tip: "Muốn thạch béo hơn tăng cốt dừa, giảm nước lọc."
+    },
+    {
+        name: "Mochi chanh dây", type: "tm", img: "mc.jpg",
+        ingredients: ["100g bột nếp, 30g bột bắp", "50g đường, 150ml cốt chanh dây", "20ml dầu ăn, Bột áo", "Nhân kem tươi/sữa chua"],
+        steps: ["Trộn bột nếp, bột bắp và đường.", "Thêm cốt chanh dây và dầu ăn vào khuấy mịn.", "Lọc qua rây và đem hấp 20 phút.", "Bột chín để nguội bớt rồi nhồi cho dẻo.", "Cán mỏng, cho nhân vào bọc lại rồi lăn qua bột áo."],
+        tip: "Nhào lúc còn ấm mochi dẻo mịn hơn. Ăn lạnh cực ngon 😎"
+    }
+];
+
+// SLIDER
+function initSlider() {
+    let sliderHtml = "";
+    recipes.forEach((r, i) => {
+        sliderHtml += `<div class="slide ${i === 0 ? 'active' : ''}"><img src="${r.img}"><div class="slide-title">Gợi ý: ${r.name}</div></div>`;
+    });
+    document.getElementById("mainSlider").innerHTML = sliderHtml;
+    let current = 0;
+    const slides = document.querySelectorAll(".slide");
+    setInterval(() => {
+        slides[current].classList.remove("active");
+        current = (current + 1) % slides.length;
+        slides[current].classList.add("active");
+    }, 4500);
+}
+
+// RENDER
+function render(){
+    let html = "";
+    let search = document.getElementById("search").value.toLowerCase();
+    let filter = document.getElementById("filter").value;
+
+    recipes.forEach((r, index) => {
+        if(r.name.toLowerCase().includes(search) && (filter === "all" || r.type === filter)){
+            html += `<div class="recipe"><img src="${r.img}" onclick="openModal(${index})"><h3>${r.name}</h3><button class="btn-submit" onclick="openModal(${index})">Xem cách nấu</button></div>`;
+        }
+    });
+    document.getElementById("recipes").innerHTML = html;
+}
+
+function openModal(index) {
+    const r = recipes[index];
+    document.getElementById("modalTitle").innerText = r.name;
+    document.getElementById("modalImg").src = r.img;
+    document.getElementById("modalIngredients").innerHTML = "<ul>" + r.ingredients.map(i => `<li>${i}</li>`).join('') + "</ul>";
+    document.getElementById("modalSteps").innerHTML = "<ol>" + r.steps.map(s => `<li>${s}</li>`).join('') + "</ol>";
+    document.getElementById("modalTip").innerHTML = "<strong>💡 Mẹo: </strong>" + r.tip;
+    document.getElementById("recipeModal").style.display = "flex";
+}
+
+function closeModal() { document.getElementById("recipeModal").style.display = "none"; }
+
+window.addEventListener('scroll', () => {
+    document.querySelectorAll('.reveal').forEach(r => {
+        if(r.getBoundingClientRect().top < window.innerHeight - 100) r.classList.add('active');
+    });
+});
+
+initSlider();
+render();
+// Lắng nghe thay đổi bộ lọc và tìm kiếm
+document.getElementById("filter").addEventListener("change", render);
+document.getElementById("search").addEventListener("input", render);
+</script>
+</body>
+</html>
